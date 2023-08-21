@@ -106,6 +106,10 @@ namespace ukol1
             bool valid = true;
             foreach(var list in faces)
             {
+                if (Math.Round(list[0].X) == Math.Round(list[1].X) && Math.Round(list[2].X) == Math.Round(list[3].X) && Math.Round(list[1].X) == Math.Round(list[2].X))
+                {
+                    continue;
+                }
                 foreach (var point in list)
                 {
                     if(Math.Round(point.Z) != zMin && Math.Round(point.Z) != zMax)
@@ -208,12 +212,30 @@ namespace ukol1
         }
         public bool listContainsList(List<List<TSG.Point>> list,List<TSG.Point> find)
         {
+            TSG.CoordinateSystem parCoordinate = pickedObject.GetCoordinateSystem();
+            TransformationPlane partPlane = new TransformationPlane(parCoordinate);
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
+            List<TSG.Point> transformedFind = new List<TSG.Point>();
+            foreach(var item in find)
+            {
+                transformedFind.Add(partPlane.TransformationMatrixToLocal.Transform(item));
+                File.AppendAllText("transformed.txt", partPlane.TransformationMatrixToLocal.Transform(item).ToString() + "\n");
+            }
+            int counter = 0;
             foreach(var item in list)
             {
-                if (item[0] == find[0] && item[1] == find[1] && item[2] == find[2] && item[3] == find[3])
+                foreach(var pt in transformedFind)
                 {
-                    return true;
+                    if(item.Contains(pt))
+                    {
+                        counter++;
+                    }
+                    if(counter == 4)
+                    {
+                        return true;
+                    }
                 }
+                counter = 0;
             }
             return false;
         }
