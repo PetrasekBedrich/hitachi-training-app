@@ -1,0 +1,24 @@
+﻿<Window x:Class="ukol1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ukol1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Button Grid.Column="0" Grid.Row="0" Height="50" Width="150" Content="Pick an object" Click="Button_Click" Margin="125,36,125,131"></Button>
+        <Label Grid.Column="0" Grid.Row="0" Margin="125,109,64,21" Name="pickedLabel" />
+        <Button Grid.Column="1" Grid.Row="0" Height="50" Width="150" Content="Pick Face" IsEnabled="False" Margin="125,36,125,131" Click="Button_Click_1" x:Name="PickFaceButton"></Button>
+        <Button Content="Button" HorizontalAlignment="Center" Margin="0,73,0,0" Grid.Row="1" VerticalAlignment="Top" Height="61" Width="132" Click="Button_Click_2"/>
+
+    </Grid>
+</Window>
