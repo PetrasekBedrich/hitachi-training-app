@@ -116,31 +116,19 @@ namespace ukol1
                 if(valid)ret.Add(list);
                 valid = true;
             }
-            if(File.Exists("filtered.txt"))
-            {
-                File.Delete("filtered.txt");
-            }
-            if(File.Exists("unfiltered.txt"))
-            {
-                File.Delete("unfiltered.txt");
-            }
-            foreach(var list in ret)
-            {
-                foreach(var point in list)
-                {
-                    File.AppendAllText("filtered.txt",point.ToString()+"\n");
-                }
-                File.AppendAllText("filtered.txt", "\n");
-            }
-            foreach(var list in faces)
-            {
-                foreach(var point in list)
-                {
-                    File.AppendAllText("unfiltered.txt", point.ToString()+"\n");
-                }
-                File.AppendAllText("unfiltered.txt", "\n");
-            }
             return ret;
+        }
+        public static TSG.Point AveragePoint(List<TSG.Point> pts)
+        {
+            var sum = new TSG.Point();
+            var count = 0;
+            foreach (var pt in pts)
+            {
+                count++;
+                sum += pt;
+            }
+
+            return new TSG.Point(sum.X / count, sum.Y / count, sum.Z / count);
         }
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
@@ -156,6 +144,7 @@ namespace ukol1
                     pickedFacePoints = Item.GetData() as ArrayList;
                 }
             }
+
             filteredFaces = filterFacesCube(pickedModelPoints);
         }
         public static List<List<TSG.Point>> GetFaces(Beam pt, TransformationPlane tp = null)
@@ -217,14 +206,31 @@ namespace ukol1
                 l.Add(item as TSG.Point);
             return l;
         }
+        public bool listContainsList(List<List<TSG.Point>> list,List<TSG.Point> find)
+        {
+            foreach(var item in list)
+            {
+                if (item[0] == find[0] && item[1] == find[1] && item[2] == find[2] && item[3] == find[3])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             TSG.CoordinateSystem parCoordinate = pickedObject.GetCoordinateSystem();
             TransformationPlane partPlane = new TransformationPlane(parCoordinate);
             model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
+            
             //model.CommitChanges();
             if (model.GetConnectionStatus())
             {
+                if(!listContainsList(filteredFaces,AsEnumerable(pickedFacePoints)))
+                {
+                    MessageBox.Show("Wrong face picked");
+                    return;
+                }
                 ContourPoint cp1 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[0])), null);
                 ContourPoint cp2 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[1])), null);
                 ContourPoint cp3 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[2])), null);

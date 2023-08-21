@@ -20,3 +20,25 @@ C:\Users\petra\Desktop\hitachi\training\ukol1\ukol1\obj\Debug\ukol1.csproj.CoreC
 C:\Users\petra\Desktop\hitachi\training\ukol1\ukol1\obj\Debug\ukol1.csproj.CopyComplete
 C:\Users\petra\Desktop\hitachi\training\ukol1\ukol1\obj\Debug\ukol1.exe
 C:\Users\petra\Desktop\hitachi\training\ukol1\ukol1\obj\Debug\ukol1.pdb
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\ukol1.exe.config
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\ukol1.exe
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\ukol1.pdb
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\Tekla.Structures.Datatype.dll
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\Tekla.Structures.dll
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\Tekla.Structures.Model.dll
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\Tekla.Structures.xml
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\Tekla.Structures.Datatype.xml
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\bin\Debug\Tekla.Structures.Model.xml
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1.csproj.AssemblyReference.cache
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\MainWindow.g.cs
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\App.g.cs
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1_MarkupCompile.cache
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1_MarkupCompile.lref
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\MainWindow.baml
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1.g.resources
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1.Properties.Resources.resources
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1.csproj.GenerateResource.cache
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1.csproj.CoreCompileInputs.cache
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1.csproj.CopyComplete
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1.exe
+C:\Users\petra\Desktop\hitachi\training\git test\ukol1\obj\Debug\ukol1.pdb
