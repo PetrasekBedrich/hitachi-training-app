@@ -245,7 +245,6 @@ namespace ukol1
             TransformationPlane partPlane = new TransformationPlane(parCoordinate);
             model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
             
-            //model.CommitChanges();
             if (model.GetConnectionStatus())
             {
                 if(!listContainsList(filteredFaces,AsEnumerable(pickedFacePoints)))
