@@ -54,10 +54,13 @@ namespace ukol1
             InitializeComponent();
             this.model = new Model();
             this.Title += " Tekla connected: " + this.model.GetConnectionStatus();
+            this.model.GetWorkPlaneHandler().SetCurrentTransformationPlane(new TransformationPlane());
         }
         
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            TransformationPlane currentPlane = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+
             Picker picker = new Picker();
             pickedObject = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_OBJECT);
             Beam pickedBeam = pickedObject as Beam;
@@ -68,6 +71,7 @@ namespace ukol1
             model.CommitChanges();
             PickFaceButton.IsEnabled = true;
             pickedModelPoints = GetFaces(pickedBeam);
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentPlane);
         }
         public static TSM.Beam createBeam(TSG.Point startPoint, TSG.Point endPoint)
         {
@@ -187,6 +191,7 @@ namespace ukol1
         }
         private bool isBackSide(List<TSG.Point> face, List<List<TSG.Point>> faces)
         {
+            TransformationPlane currentPlane = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
             TSG.CoordinateSystem parCoordinate = pickedObject.GetCoordinateSystem();
             TransformationPlane partPlane = new TransformationPlane(parCoordinate);
             model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
@@ -209,6 +214,7 @@ namespace ukol1
                     ret = false;
                 }
             }
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentPlane);
             return ret;
         }
         public static List<TSG.Point> AsEnumerable(ArrayList a)
@@ -220,6 +226,7 @@ namespace ukol1
         }
         public bool listContainsList(List<List<TSG.Point>> list,List<TSG.Point> find)
         {
+            TransformationPlane currentPlane = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
             TSG.CoordinateSystem parCoordinate = pickedObject.GetCoordinateSystem();
             TransformationPlane partPlane = new TransformationPlane(parCoordinate);
             model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
@@ -240,15 +247,18 @@ namespace ukol1
                     }
                     if(counter == 4)
                     {
+                        model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentPlane);
                         return true;
                     }
                 }
                 counter = 0;
             }
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentPlane);
             return false;
         }
         private bool isVertical(List<TSG.Point> side)
         {
+            TransformationPlane currentPlane = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
             TSG.CoordinateSystem parCoordinate = pickedObject.GetCoordinateSystem();
             TransformationPlane partPlane = new TransformationPlane(parCoordinate);
             model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
@@ -256,14 +266,16 @@ namespace ukol1
             foreach(var item in side)
             {
                 if(Math.Round(partPlane.TransformationMatrixToLocal.Transform((TSG.Point)item).Z) != Math.Round(rf))
-                { return true; }
+                { model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentPlane); return true; }
             }
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentPlane);
             return false;
         }
         private const double plateLength = 85;
         private const double plateWidth = 50;
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+            TransformationPlane currentPlane = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
             TSG.CoordinateSystem parCoordinate = pickedObject.GetCoordinateSystem();
             TransformationPlane partPlane = new TransformationPlane(parCoordinate);
             model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
@@ -291,7 +303,8 @@ namespace ukol1
                 TSG.Point tp3 = partPlane.TransformationMatrixToLocal.Transform((TSG.Point)pickedFacePoints[2]);
                 TSG.Point tp4 = partPlane.TransformationMatrixToLocal.Transform((TSG.Point)pickedFacePoints[3]);
 
-                double legth = Math.Round((pickedObject as Beam).EndPoint.X - (pickedObject as Beam).StartPoint.X);
+                double legth = Math.Round(((pickedObject as Beam).EndPoint).X - ((pickedObject as Beam).StartPoint).X);
+                MessageBox.Show(legth.ToString());
                 legth -= plateLength;
                 legth /= 2;
                 bool flag = false;
@@ -370,6 +383,7 @@ namespace ukol1
                 
                 contourPlate.Insert();
                 Plate = contourPlate;
+                model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentPlane);
                 model.CommitChanges();
             }
         }
