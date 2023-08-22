@@ -295,6 +295,12 @@ namespace ukol1
                 legth -= plateLength;
                 legth /= 2;
                 bool flag = false;
+                string profile = (pickedObject as Beam).Profile.ProfileString;
+                profile = profile.Remove(0, 3);
+                var paramArr = profile.Split('*');
+                double width = Convert.ToDouble(paramArr[0]);
+                width -= plateWidth;
+                width /= 2;
                 ContourPoint cp1 = null;
                 ContourPoint cp2 = null;
                 ContourPoint cp3 = null;
@@ -303,36 +309,35 @@ namespace ukol1
                 {
                     if (tp1.Z > 0)
                     {
-                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y - plateWidth, tp1.Z), null);
-                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y + plateWidth, tp2.Z), null);
-                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y + plateWidth, tp3.Z), null);
-                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y - plateWidth, tp4.Z), null);
+                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y - width, tp1.Z), null);
+                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y + width, tp2.Z), null);
+                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y + width, tp3.Z), null);
+                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y - width, tp4.Z), null);
                     }
                     else
                     {
                         flag = true;
-                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y + plateWidth, tp1.Z), null);
-                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y - plateWidth, tp2.Z), null);
-                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y - plateWidth, tp3.Z), null);
-                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y + plateWidth, tp4.Z), null);
+                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y + width, tp1.Z), null);
+                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y - width, tp2.Z), null);
+                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y - width, tp3.Z), null);
+                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y + width, tp4.Z), null);
                     }
                 }
                 else
                 {
                     if (isBackSide(AsEnumerable(pickedFacePoints), pickedModelPoints))
                     {
-                        MessageBox.Show("backside?");
-                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y , tp1.Z - plateWidth), null);
-                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y , tp2.Z+ plateWidth), null);
-                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y , tp3.Z+ plateWidth), null);
-                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y , tp4.Z- plateWidth), null);
+                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y , tp1.Z - width), null);
+                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y , tp2.Z+ width), null);
+                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y , tp3.Z+ width), null);
+                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y , tp4.Z- width), null);
                     }
                     else
                     {
-                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y , tp1.Z + plateWidth), null);
-                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y , tp2.Z - plateWidth), null);
-                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y , tp3.Z - plateWidth), null);
-                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y , tp4.Z + plateWidth), null);
+                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y , tp1.Z + width), null);
+                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y , tp2.Z - width), null);
+                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y , tp3.Z - width), null);
+                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y , tp4.Z + width), null);
                     }
                 }
                 Contour contour = new Contour();
