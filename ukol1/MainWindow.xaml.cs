@@ -157,7 +157,6 @@ namespace ukol1
                     pickedFacePoints = Item.GetData() as ArrayList;
                 }
             }
-
             filteredFaces = filterFacesCube(pickedModelPoints);
         }
         public static List<List<TSG.Point>> GetFaces(Beam pt, TransformationPlane tp = null)
@@ -197,15 +196,15 @@ namespace ukol1
             {
                 foreach (var point in list)
                 {
-                    if ((point).Z < zMin)
+                    if (Math.Round((point).Y) < Math.Round(zMin))
                     {
-                        zMin = (point).Z;
+                        zMin = Math.Round((point).Y);
                     }
                 }
             }
             foreach(var point in face)
             {
-                if( Math.Round(partPlane.TransformationMatrixToLocal.Transform((point)).Z) != Math.Round(zMin))
+                if( Math.Round(partPlane.TransformationMatrixToLocal.Transform((point)).Y) != Math.Round(zMin))
                 {
                     ret = false;
                 }
@@ -248,12 +247,33 @@ namespace ukol1
             }
             return false;
         }
+        private bool isVertical(List<TSG.Point> side)
+        {
+            TSG.CoordinateSystem parCoordinate = pickedObject.GetCoordinateSystem();
+            TransformationPlane partPlane = new TransformationPlane(parCoordinate);
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
+            double rf = Math.Round(partPlane.TransformationMatrixToLocal.Transform(side[0]).Z);
+            foreach(var item in side)
+            {
+                if(Math.Round(partPlane.TransformationMatrixToLocal.Transform((TSG.Point)item).Z) != Math.Round(rf))
+                { return true; }
+            }
+            return false;
+        }
+        private const double plateLength = 85;
+        private const double plateWidth = 50;
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             TSG.CoordinateSystem parCoordinate = pickedObject.GetCoordinateSystem();
             TransformationPlane partPlane = new TransformationPlane(parCoordinate);
             model.GetWorkPlaneHandler().SetCurrentTransformationPlane(partPlane);
-            
+
+            foreach (var point in pickedFacePoints)
+            {
+                File.AppendAllText("horizontal.txt", (partPlane.TransformationMatrixToLocal.Transform((TSG.Point)point)).ToString() + "\n");
+            }
+            File.AppendAllText("horizontal.txt", "\n");
+
             if (model.GetConnectionStatus())
             {
                 if(!listContainsList(filteredFaces,AsEnumerable(pickedFacePoints)))
@@ -261,10 +281,60 @@ namespace ukol1
                     MessageBox.Show("Wrong face picked");
                     return;
                 }
-                ContourPoint cp1 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[0])), null);
-                ContourPoint cp2 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[1])), null);
-                ContourPoint cp3 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[2])), null);
-                ContourPoint cp4 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[3])), null);
+                //ContourPoint cp1 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[0])), null);
+                //ContourPoint cp2 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[1])), null);
+                //ContourPoint cp3 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[2])), null);
+                //ContourPoint cp4 = new ContourPoint(partPlane.TransformationMatrixToLocal.Transform(new TSG.Point((TSG.Point)pickedFacePoints[3])), null);
+
+                TSG.Point tp1 = partPlane.TransformationMatrixToLocal.Transform((TSG.Point)pickedFacePoints[0]);
+                TSG.Point tp2 = partPlane.TransformationMatrixToLocal.Transform((TSG.Point)pickedFacePoints[1]);
+                TSG.Point tp3 = partPlane.TransformationMatrixToLocal.Transform((TSG.Point)pickedFacePoints[2]);
+                TSG.Point tp4 = partPlane.TransformationMatrixToLocal.Transform((TSG.Point)pickedFacePoints[3]);
+
+                double legth = Math.Round((pickedObject as Beam).EndPoint.X - (pickedObject as Beam).StartPoint.X);
+                legth -= plateLength;
+                legth /= 2;
+                bool flag = false;
+                ContourPoint cp1 = null;
+                ContourPoint cp2 = null;
+                ContourPoint cp3 = null;
+                ContourPoint cp4 = null;
+                if (!isVertical(AsEnumerable(pickedFacePoints)))
+                {
+                    if (tp1.Z > 0)
+                    {
+                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y - plateWidth, tp1.Z), null);
+                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y + plateWidth, tp2.Z), null);
+                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y + plateWidth, tp3.Z), null);
+                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y - plateWidth, tp4.Z), null);
+                    }
+                    else
+                    {
+                        flag = true;
+                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y + plateWidth, tp1.Z), null);
+                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y - plateWidth, tp2.Z), null);
+                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y - plateWidth, tp3.Z), null);
+                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y + plateWidth, tp4.Z), null);
+                    }
+                }
+                else
+                {
+                    if (isBackSide(AsEnumerable(pickedFacePoints), pickedModelPoints))
+                    {
+                        MessageBox.Show("backside?");
+                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y , tp1.Z - plateWidth), null);
+                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y , tp2.Z+ plateWidth), null);
+                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y , tp3.Z+ plateWidth), null);
+                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y , tp4.Z- plateWidth), null);
+                    }
+                    else
+                    {
+                        cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y , tp1.Z + plateWidth), null);
+                        cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y , tp2.Z - plateWidth), null);
+                        cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y , tp3.Z - plateWidth), null);
+                        cp4 = new ContourPoint(new TSG.Point(tp4.X - legth, tp4.Y , tp4.Z + plateWidth), null);
+                    }
+                }
                 Contour contour = new Contour();
                 contour.AddContourPoint(cp1);
                 contour.AddContourPoint(cp2);
@@ -272,7 +342,7 @@ namespace ukol1
                 contour.AddContourPoint(cp4);
                 ContourPlate contourPlate = new ContourPlate();
                 contourPlate.Contour = contour;
-                if (isBackSide(AsEnumerable(pickedFacePoints), pickedModelPoints))
+                if (flag)
                 {
                     contourPlate.Position.Depth = Position.DepthEnum.BEHIND;
                 }
