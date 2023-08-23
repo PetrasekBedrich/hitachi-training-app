@@ -273,6 +273,10 @@ namespace ukol1
         }
         private const double plateLength = 85;
         private const double plateWidth = 50;
+        private TSG.Point calculateMiddle(TSG.Point point1, TSG.Point point2)
+        {
+            return new TSG.Point((point1.X + point2.X) / 2, (point1.Y + point2.Y) / 2, (point1.Z + point2.Z) / 2);
+        }
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             TransformationPlane currentPlane = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
@@ -303,8 +307,7 @@ namespace ukol1
                 TSG.Point tp3 = partPlane.TransformationMatrixToLocal.Transform((TSG.Point)pickedFacePoints[2]);
                 TSG.Point tp4 = partPlane.TransformationMatrixToLocal.Transform((TSG.Point)pickedFacePoints[3]);
 
-                double legth = Math.Round(((pickedObject as Beam).EndPoint).X - ((pickedObject as Beam).StartPoint).X);
-                MessageBox.Show(legth.ToString());
+                double legth = Math.Round(partPlane.TransformationMatrixToLocal.Transform((pickedObject as Beam).EndPoint).X);
                 legth -= plateLength;
                 legth /= 2;
                 bool flag = false;
@@ -318,8 +321,11 @@ namespace ukol1
                 ContourPoint cp2 = null;
                 ContourPoint cp3 = null;
                 ContourPoint cp4 = null;
+                bool side = false;
                 if (!isVertical(AsEnumerable(pickedFacePoints)))
                 {
+                    side = true;
+                    MessageBox.Show("Side");
                     if (tp1.Z > 0)
                     {
                         cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y - width, tp1.Z), null);
@@ -340,6 +346,7 @@ namespace ukol1
                 {
                     if (isBackSide(AsEnumerable(pickedFacePoints), pickedModelPoints))
                     {
+                        MessageBox.Show("Back");
                         cp1 = new ContourPoint(new TSG.Point(tp1.X + legth, tp1.Y , tp1.Z - width), null);
                         cp2 = new ContourPoint(new TSG.Point(tp2.X + legth, tp2.Y , tp2.Z+ width), null);
                         cp3 = new ContourPoint(new TSG.Point(tp3.X - legth, tp3.Y , tp3.Z+ width), null);
@@ -383,6 +390,57 @@ namespace ukol1
                 
                 contourPlate.Insert();
                 Plate = contourPlate;
+
+                BoltXYList bolt = new BoltXYList();
+                var start = calculateMiddle((TSG.Point)cp1, (TSG.Point)cp2);
+                var end = calculateMiddle((TSG.Point)cp3, (TSG.Point)cp4);
+                bolt.FirstPosition = start;
+                bolt.SecondPosition = end;
+                bolt.PartToBoltTo = Plate;
+                bolt.PartToBeBolted = (pickedObject as Beam);
+
+                bolt.AddBoltDistX(20);
+                bolt.AddBoltDistY(-10);
+
+                bolt.AddBoltDistX(20);
+                bolt.AddBoltDistY(10);
+
+                
+
+                bolt.BoltSize = 4.0;
+                bolt.Tolerance = 1;
+                bolt.BoltStandard = "NELSON";
+                bolt.BoltType = BoltGroup.BoltTypeEnum.BOLT_TYPE_SITE;
+                bolt.Length = 200;
+                bolt.ThreadInMaterial = BoltGroup.BoltThreadInMaterialEnum.THREAD_IN_MATERIAL_YES;
+                bolt.Position.Depth = Position.DepthEnum.MIDDLE;
+                bolt.Position.Plane = Position.PlaneEnum.MIDDLE;
+                if (!side)
+                {
+                    bolt.Position.Rotation = Position.RotationEnum.BELOW;
+
+                    bolt.AddBoltDistX(64.5);
+                    bolt.AddBoltDistY(-10);
+
+                    bolt.AddBoltDistX(60);
+                    bolt.AddBoltDistY(10);
+                }
+                else
+                {
+                    bolt.Position.Rotation = Position.RotationEnum.BACK;
+                    bolt.AddBoltDistX(64.5);
+                    bolt.AddBoltDistY(10);
+
+                    bolt.AddBoltDistX(60);
+                    bolt.AddBoltDistY(-10);
+                }
+                bolt.Bolt = false;
+                bolt.Nut1 = false;
+                bolt.Nut2 = false;
+                bolt.Washer1 = false;
+                bolt.Washer2 = false;
+                bolt.Washer3 = false;
+                if(!bolt.Insert())MessageBox.Show("Bolt failed");
                 model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentPlane);
                 model.CommitChanges();
             }
